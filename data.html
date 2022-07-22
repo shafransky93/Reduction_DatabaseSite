@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<title>Lowell Observatory Public Access Data</title>
+	<link rel="stylesheet" href="css/filetree.css" type="text/css" >
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	
+<script type="text/javascript" >
+$(document).ready( function() {
+
+	$( '#container' ).html( '<ul class="filetree start"><li class="wait">' + 'Generating Tree...' + '<li></ul>' );
+	
+	getfilelist( $('#container') , 'AstroData' );
+	
+	function getfilelist( cont, root ) {
+	
+		$( cont ).addClass( 'wait' );
+			
+		$.post( 'Foldertree.php', { dir: root }, function( data ) {
+	
+			$( cont ).find( '.start' ).html( '' );
+			$( cont ).removeClass( 'wait' ).append( data );
+			if( 'AstroData' == root ) 
+				$( cont ).find('UL:hidden').show();
+			else 
+				$( cont ).find('UL:hidden').slideDown({ duration: 500, easing: null });
+			
+		});
+	}
+	
+	$( '#container' ).on('click', 'LI A', function() {
+		var entry = $(this).parent();
+		
+		if( entry.hasClass('folder') ) {
+			if( entry.hasClass('collapsed') ) {
+						
+				entry.find('UL').remove();
+				getfilelist( entry, escape( $(this).attr('rel') ));
+				entry.removeClass('collapsed').addClass('expanded');
+			}
+			else {
+				
+				entry.find('UL').slideUp({ duration: 500, easing: null });
+				entry.removeClass('expanded').addClass('collapsed');
+			}
+		} else {
+			$( '#selected_file' ).text( "File:  " + $(this).attr( 'rel' ));
+		}
+	return false;
+	});
+	
+});
+</script>
+
+</head>
+<body>
+	<div id="logo">
+		<h1>
+			<a href="/" title="Lowell Logo"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAX0AAACECAMAAABLTQsGAAAAzFBMVEX///8AAQTtHCQAAADsAABjZGZZWlxfYGLtDhlcXV9YWVvtFB36xsfyeHv72NnzbHDvTlLsAA7Ozs/U1dX5+flqa222trfuOj/sAAh9foDy8vLb29z0goXs7OzsABLo6Oj83+CioqP+9fXCwsNxcnSzs7T60NH+7u/1kJP0iYyQkZKHh4iWl5j3qqz4tLbuKjGoqakcHB7wU1j5vb8QEBJ4eXr1l5klJSbzbXFNTU7vQ0jvOD7uJS1AQEHxXGD3rrA0NDX2n6IhISNFRUY2omkoAAAXmElEQVR4nO1dZ3viuhImuMqQBBtDKKGaEjAJJFmyIT3n/P//dFVcJFkSdXfPfdbvh81GLpJfjWZGo5FSKOTIkSNHjhw5cuTIkSNHjhw5cuTIkSPHfwnDoeTC9Lc24+/E5/JGWH7xUfzNLaFRrbX+YO2/C+VKwz0XlPfPu7b+21uToK1pP70/V/1vwfTzqlEq2ln2y5elbrF4Wvb9VrsajMfjIPCq7S2CDck/07TxSev/jwFSDLkvZti/uFm6Niw/Hft+dRxaAADTxP+gH1ZzUe/J7kfkn0H6Q+HV6WSSsUj/ZyZq8mw3MMUc+9OnZaNbIhdOwr7vDUaOAyyDg2UBx5wHHcEjhHzEv4j+Cx2j+FZ8rVQqS/gT/3qKtv4uTHXddV0B+696o9s4Gft+EELmeeKpLjCdUZ3XQtWYfDH9w9nLm9tF7SshoJ9u8ap8dFt/Jy7Kk4tPkezD8vKDfRL2ewvDsRhpj9WORRWb5qLKPJWSL5H+wnBybUcSAtGtPP6fKR6CRzfDPsbwtXQ8++0wlXoLmLV1cz5YBRCr1WDerFmpNrKcdeCnD5oU+2faSvz2ckr+81HN/IMoidkvzLrHsg+5t2LtAtbzervlM9dbveoqNOL+sZxREF9ZaAz7msTxfIz0ZulVNln8z+NF5PNA3LrHsd9aRIJtmVYYdHzZbcgiR53kNIn+WTHkQ/p/SrzTB6J73KeDW/mncWmL2S/rR7Hv1UAk0s1gi2fve/NoAIAa+n3MkQ/pr4mf/CbC714c2so/judfwX5nbkbcL9q73N8a1+ADloGczyz5UPcEwscmDcz+8v/S4mL8Ctn3iNKB3It8eTECw5GRD+n/EmquC+J1vhzUyP8EfgH7K4f4kWvpTFaIsZR8SP9c9ETEfuWQRv43cHr2Q0w+MMTaQo2xkPsz7YfQ7cnZ59EZYQsKFoeEh2Xkf4lHUc4+h56BVL51kOBnXM2YfCDxV3P2WXRqiHywp8aPICRfk8U5Czn7HDprRL45P2hRSkz+D1mgoZCzz4KQ7wwOaoiIfCj3VYUOy9mn0QSnJl8u9wg5+xQGmPzFQc0IhORvsd05+ykC5Oc7h63ECsn/sc125+wn6DnYzT+oEULyN7K4aIKc/QQ15Oc3t97WM7T7kBNqAfmatt5eZc5+DKz0a9uian6oYTD6SUg+HkRbgtM5+xGI3qluuSv4SYhmZlBC8uvoymCT+zw7AXn65jaLG1KpColiqQvIv0erAp3QNIDS8ObsEwRocWStNpOdDZOqENHfE5C/wQrM28B3SqMMCIezP5x8z54/Pj7Ob25/6cJY/xZV83xTliwAnYR9H5lcoF7Gat9zq7XRrGzAr+Jqo6gX59CUOKpUzkPZf3xe6hEaje7V9YS5OimXJynKfVL6eX79fYeulMvl25vr8358++f5zfdnGeP2+/yRetHwu0Lq6Hb1t2dhL5+E/THkCah1tMfLuKZFvbXS2OJkIaWDvCiV63MY++UrXV/eTKbD4bR8+6LbpW7jsp9eHkK+3G6Mhq5jsR0uddeFv3RddBn+5zu+v4v4jbpS1z/SFz0u9benx4uLx1mxASluiDKVT8E+Fn1DeUuGfMjzGVHqAzZ9hDIeY1Mt/IewP61AbikJ7V/CD7X167Tk8Y0sFyN09cs7Ujq8e0mKuy+UvhqWP+MrjZf0xf6lrid5+U8oN9AVrD+fgn3EkllX3dEWB48R/UzyTjIgyBegXpXkMyAcwP7Ett1L1j7doaS4RoXKCXrSY5qv6Rvj4tID/9Zrkn4zo5r+4up3VEvfSijtsc8/eAr212qSoA6RLJtA6Z8z5H+xEwZkzB25G7s/+5+NUjdzex9RYy/7acldlKf1xkoryTArureZ916hN1ymv/tXNptlNF0i+t946T8B+1Uk+sqA2Jd4xfBM+zmKyCf54rz28kdQ8wsX1DH2Zv9WL5auBO/BGWVv/bRkhunnk+T8JU7fatwVeKB+aVA3v9g2N0AuMM/8qDkB+wvo61uqG0YS8hHh8U9NmKyPzLkjnfDuyz4kv6j3BRfwx9qvqWQOCc9F7uZPrOC7swKPmy5TCjWRy6dU49QvnRs2x7OPXBOgmmgJ5lOxuCed4K2FwfwWerfUouzJ/gTe7op3qJ2jN3UfUuklaXKNR/a2oS2pEMo+1a13uuge/ChneY9nHytnRYCn9UNEvqal6ki7h45NU6i7BkDhdO7HPk7LdsXTniHJGU67ZopFn1blGNfkvozv/mzbaR71tFgS2YYb9GyDzTk9nn2oeJRT0rXQ3fnyCptY7SgC+W2oeixZ1+7H/qwh/FCCW6JT+knBBxZz3kns60LVAztWT6dsN3DcdLOTK8xoacmYkqPZR26hqXDKRc4mVPHI63NIyO0fVTBnpLDoe7E/RR+kyza4EOGnZL2Mu0PnDewLsQdcTKWvU43Aw6aUrYL0nP5Jlx3NfttRGcZCoSZatYp6Cw+LjKfDYAXkI2sv9snAlybcXpNdgv2k4A13xwd3G7G7OmcPvl3KnCLRF7WJ5OSXmDcezb6KnoJI9LU0O8r/B9P/pbAayJ2VzSX2Yt/Gt0oDgRP8vW4SQCC9ResiDDyCMvbgwaY8+QoaHlezawbnD8VoDqHTAnA0+3NL4ZUIvE0qkFNo3Ufhfrnm8pE7K1FN+7BPnEqZ2i9Esk7lQxNFwe/MuLazFMJbKUvQJ36Ry6Jrk+19xRJjso9lH6l9R664W2eZ4Bqtxavv0b5c+XpwaEnNyj7sYxdSxf6lzdGKVTz38mkUbKDGSAH5m3Y/+eUO37K8ymKJ8MpY7GPZb6FFLXlgv86Tf8YFDsKI/pHMdNSBASQpQvuwj30YwTwpwRNxJlOzTGhkvUs4LyASvKQKhy6tibBT2hBZd3845I8jOZb9qqNU+wYfvM8sAnjvhH6Z9oKKX1bBPuzjyauK/Uf8wXQUIetdTvXSK7EHlIMJvVV6YnuOCOWnaTIcy75CNCF81uZqP0U6Cs3G5KmycHDJ5lv7sC921CkQpdKgHEKi498ocZ113afIN6UYe7Pp3TOYUEEoSIhj2YcujyLC5rHki6dVcHxo7/Ia4HxrJFZte7Ov0vtT3ukpXOicLppCyzkkO90oZsq6S/vweCOlYKorxLHsD4DhyJcUF5pa7SB0oDHQ7uVOZxN6PeKrp2W/lDGnZDdtqtNnXTR4ypyKqthFanj42OFkFwbkOJZ96HAqgjzMVEu8+YqYBk0exYc1GMfvXVlmpzosptnoMQk/6DG3U+guDuNt/EmtFzpLNSZ01518x7KPJFM+0/3JsH8vUiDRWTBy9tF07nj2SYjgTb6rnZDKhCKmDcYUPLnEbpBFFrdPSs+7jT79Hmx1i/Zu2+dPwL5EKyNwRldkWo1t7CO7LtZt+7BP9rULo/sERPZ1Jr/hnJbj6VuJDIO+S83DpjYXjSBhUJfNk5Dhl7Lf4r397LSpp2mDL01TsB+YMsuyD/vEUWzIreFUcBwUCT9EXfbU6EY04Z6MXP5vl+2wOFq6m+I/nn1F6mxVlkWSIoA9AsmXHcUA4ZmGeTz75W1mF/s8nGHwsb7q4rD/dFmKJ8Ik1Eac/Fd7yb6nH8VzdlI9J2BfPtkKskEe3jsdwOHwr6Z9KdmXJBTuyP4Qk0ZiBHJ9jD+YHxtPJC6J/9tI5HlK4p/IGXps8I8Mr4jztJPPeSz7axX7fJwBhxSqvR5H9VxTLbBA9o+zuhW8lk2WS+SqBxPN2wUSMkO6BS2gJBeJy4/imh+2y7+IXNzt2JpjT8kIVZonwz7JH3/P5O+LLEIMyP5RHueTjr+ORBLkriAiws4cs0SE8xmpc+rixI2coYtudvo8iU5O2UXzH8v+QmV1MzE2rRoatVVGy2iqICe0upJzUXc6JaPsRvJeIU6NJAKDF8xZ3xEh6rPhcFmiLxKX/wE6OAIvKjpVLZPVIEDSuXyjdWamIQX0xuXsezz7X+L7oOpxpDUE0hqIS6Ie49/dkj2l7hat+SEgSyoQVzILaDx+NhiOiD2wy8vMunsh7rFiiU4QohpNlxL2s3PAMu1sKQC9cflsK+vzCG/rvWskq1CIMZDptrut5/P0Pxqp83fpKjQCtJXcijcBnlqVXl5KjGPZJ1lt0A0SCTgxMfB9fcH76HxDonlKL5l6I/a3ThqQPyhl38/ofZHrWMfGQLo+trBk6WxkYlOkljZYTJ51u1gqxp3jv9hS3fOti9IsCzHPpRIn5NGhZGKtNyxGV4s8fRevDUa7kSWdbkZ8ypmAqxg9RxFl8zNp4wL1PobUO4F8vty0ZCuXRJNLGjl5Wuro26i0hOmbLREp6OyXhCsi6eFv7EOPZNhJXKhJnIarn9Ni3YfSwNbyIElNJKM6m67Lw1fmcP5D1m1T9u8z4wSddq3c72UZpvh6OT6TcDmhv3E47N89XXZ1cp5ug1Y0F0s80ks8/XAmZRcl5pgQkcnAJMMukxYb4TbJgrZnEyJY07tL3e6+sVVHYyRjuaJ8XYlAUAgtxb4JtKYOnXmKfi3kIqLvmqPcceQ7Eoezv4yPQy3pxY/z6+snlEdwWVl29UbXjq+wq+LTB9RjJW6tvP9qu1d9Sf1kapXhAWs9+WrNrRs3rqsvK8+zy4rbsEuNS7a3yGom7NsXNvnqohg/vG2VZgAU0y0PafQwPdgXa3jmCJO6tlG/v20aI0Hx9LuYnkUL22+TvSa2TZe6b9/8c7MuXnd9KCfiNn3quu653G9COZ4Z0ScpD3y+CYXHYjdpRsnuoma5RVZPTS6T/RiwXx77cRP6N+mnNSpPF6pD/zzHqMmFd/DzvY48yoj75gjRf08tRf77Y8txMnVgZY1F/3zZgJYQUe42Gg2XEG+XKOpLXd2eCRreP0dnfJf0q5u7i37/4u65qDee+4oGoNmTQAVAV1TgKqaYwnooQSi5pRlTy8WL7toRYOt1XX8luu/Z1e0EaOtSUTFva1mqjJICOYA2ztL/EbQWyL18j6e27W0nYRTmliCh5EHX7dfK5fXNzc0txDf8Obs+/3i4erOj7XCll5lso2B/VtEbaO8V2W9VmW3ZtvhqdwWuzadub/EIy+dvOkrkwRy+PHGtmRRfHz4un8/PUbLVbHZz/rAkaublrfJxCS+QNKyb68tX1aw5lPokKeKcKg3tVGyH6cbEhWJBl8AwrOzoGKJNb4Kbh8PhdDqZoKtKYzL9fLq5fPh4vnm6236YZ/nloy8onn1sTVwYPsJqKh/XN5+CWjIfEP3uS8rFqJvqXbUF+vAdTH/Br79H+WvqPS8FlMS89e1/NTrQJVTvkzY02ukhSr9t4ZUu+Uwtwhhs7aC/G6GlJIjbJh3TD+dpm0JLvikrwshSO6R/PQKl6smcLpvQX/BqqlPXMNpAkauVo4B3FkoT+P2m9AQShPE2xbMAqk1JOQpIN8t2zfU2Ge7PdjhwLUGrBnKbuwUtwxLvP/GEG+bwKstubw5MRaJcDgKJYyI52feMzuhsKW1qE2w/a+yvh1+zBLt75lLy0Va5iPX6j4Gcfy8X/V0QmNlwwFpB/lmStYzyGaRWIDzwaNW/DSOLD0SKtuky9BNTUdPobXQsqo4iRZSg7QVBdfdjn6tB4J16+rDzC2FbvT3augfaG+6IGNERmxz9eKaFnSLtXhinCx21b9SB/ij642nUH4siqG4chFrIDsg6gIUmPZ48ciPCiCsD6eb5+WZDKcCOs2H8sDX94Yv0hQ5zX9RWJ9PWIKpunZQ3N5u03ePNZofxP3bYLeWCbbo8+8jt97+iXYsCJ8jbqL3NlQMs0zIMACynxtgHOGgg0SYADv2GgWMZ65Flmakl9xwD/e1NCIp9XGaawGlGUt126CnfGDCH1vQc2uQtHPQydLoEYGqn22owbUXJYqg6K6muZVpJEkcHWIok5RRN9gTm963sY8p7P+LQf8a8+jWl3vFDxwKh1/Nb7foIfhOzFdIBdc/zViPLTBvVdqwmfGFvbW2Sez3TWtQJqDIQtNvV+hqYMecji8ooWrN8LABt8rwxetfIMJh3+qFpgbnXawnaCqurw+oCqrrAMePlwjmQLKty6DDLrz2Jp8/S/7OV/jHRzO6VleJcJIjQBOukx+oWc4RY1Yl8paaVpoAOAFmhbNVSVeEJvAXoaPWih2POoVORENZ2mJMvW5bgBN4mN/+Zm2AUt9WvA6atsDrynaGVbNFpWlHuJBSjHc9W9hxKJoRHgWXpN9M8W37Hem+jVPpjB4SUCHqWYaa2I2Hfo2hrgujISmpESdhvs/8p+FSYewGYfUxjYGW3F3DsQ7UTMpXSiamwFtKEqpl0StsEJPzIDDo1xpR94POoZPRTp1Zxecwj5RmHHagbmdsDk8r6SdiHGjsR9DnIfomSfSjlcdcNQMxXy2Kk0a+BwSgjnyz7PcC31QFpWxP2e2l1hRUprJt7hNcHqbhK/npQln76//Sp4yu1pR8AwNHWtFLhp9hPmz82s8kXSvbhW2Ld13PiZ6ESohViYDqdwOR39bHsDwBfCa0QafaT2/wRMi4tZ6+VpUWywrsr+2xX/Ju8qbflVGEjM7+A1it5JmF/BdLPbAEDLHr8Qwr26YdDEKnVNbt5uAlCqJf4bmXZr2VO6fWctK0J+2NAbRKBDVvB0ao+CZnHIk5vWBzC/pkGdqyn52QTHZzU+kH2UbN7cABTvHjQSQJz3t0bNQnmaRl62O+NTYt2Tck4gAJKu/dt7H0OAJfVwbDfczJLFD61IkKsLqyOTVedA6ue6dVtWEVvDQ9i/0xTnq6XAvoCGYVYS4dDlbjxJjAYyW6PHMty1pTmIM42grnmyuDUiFIoUL/j7oaOE63C5wDV2XG4aSHDftXJZh3ULFF1tKB30J/rUx6zKYJHvnd+GPtbjkpKaxGYI+gfxBKYsG/VWMVSDQHkPxVF6O835wSDtAz/xTZjNKYFegVwaoXJWNhetKY650KxDPsi7dZMlVFS3YodP8gx3TEOn8Gh7J9pO4WURfJk0bJvBr1erzqGVHNf3psD6s8iifU+qGePhugBpHKgwqY1FxwJmLK2yRK1n+yDQHgSxUh5BrUSh7Ov7RLW7GT1vs/q/cjnMbMTdY/a/yubbQVmxoucgzWeM1BFrZoxIgOHO7OVYb8j0PsOo/c7guoQ+wcv6x2seSTHCfCoZViFX5CIWMI+8vYyIQzKmknnugvAR/hQccthFB50NZG+hmDmelmfJ9vW1HbH1WXGxxHsH2p1f6rO26cAvUGOnRHlQ6fsBwID4acDR+5xri1uYccfgVUdWDSPa2s0IFiwx+Sw7K8yK38jy6L9/R56VSaecwT7kvNntwn+etd5NXTea4wvDB02wVwXzYZielv1+OXpdFXOPpygckG+sTmqMQrCo7zP0KLzHVn2O5bF/jmgMa1oCPvwHn7KdgT7hfZmX/7xCak7Y+xYa6q56DiB9PNT9hfJiKgmsa2Ws03zoIc9h4ue9QzuBLqQ6h+PmQdwcR7UVqpv0OG9adOjoF6muqPYh5X82Id/bTdzm2IOlW3MnA+dj40oxgm/KTaTneTzKFugmusOeFM4t5gJdo+OP/premU7G+O0arFi8VcmH+PsCas7jn2c07BruEfTwn3X3OaOAUb1nt9pr4xsfH8VBMGqSfvMCxOgfTMt+JmUw2HNVwT01J90DlT9jCmssjZkAWjvs25SlPLsw7ZaZjPotTpV1FZaUOiANrs8eCz7sE0/d+iAzH6WHTEGwAJ4Vc4yWSNA1rYcEzB8rU3LqRkOMFMXRLy2FbHfgrMFxhSOTOoXqL9odloG5YzCXufaCv0sy4zaOmLa6jkR+y2DrW50gmwar3am7ABE/dfqsJXu1qCGPD5grPl1XauGsA7ZTMUV6hNg0KEfoxajmZZZiamoMUHpMa0bxwYbxhhQYf4wGyNorWoWbmuTU3VsdZQpWxunSONr1c17vF9LyLz2FR46n0ZoVwOvunOmp9/2vPbhOQ29g/5gefp4Fdb+S3Ia1Gh54Yb0AIufzuAY6nPsjE67Htac93/u77X7+3/enVoY/AlB+KvhdzqdXqejzt7MkSNHjhw5cuTIkSNHjhw5cuTIkSNHjl+I/wEIcQuRxbmeMAAAAABJRU5ErkJggg==" alt="Lowell Logo" title="Lowell Logo" border="0" style="border: 0px;" /></a>
+		</h1>
+		<div id="pgtitle">
+			Lowell Observatory Public Access Data Portal
+		</div>
+		<h2>
+			<a href="calender.html">Calender</a>
+		</h2>
+	</div>
+<div id="container"> </div>
+<div id="selected_file"></div>
+</body>
+</html>
