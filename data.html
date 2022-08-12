@@ -1,16 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
+<!DOCTYPE html>
 <html>
 <meta charset="UTF-8">
+<title>Lowell Public Data Portal: Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
 <body>
 
 <!-- Navigation -->
-
 <nav class="w3-bar w3-black">
-  <a href="/" class="w3-button w3-bar-item">Home</a>
+  <a href="index.html" class="w3-button w3-bar-item">Home</a>
   <a href="downloads.html" class="w3-button w3-bar-item">Software</a>
   <a href="data.html" class="w3-button w3-bar-item">Data</a>
   <a href="calender.html" class="w3-button w3-bar-item">Calender</a>
@@ -61,11 +59,13 @@ $(document).ready( function() {
 				entry.removeClass('expanded').addClass('collapsed');
 			}
 		} else {
-			$( '#selected_file' ).text( "File:  " + $(this).attr( 'rel' ));
+			var a = $('<a />');
+			a.attr('href',$(this).attr( 'rel' ));
+			a.text("File: " + $(this).attr( 'rel' ));
+			$('body').append(a);
 		}
 	return false;
-	});
-	
+	});	
 });
 </script>
 
