@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html>
 <meta charset="UTF-8">
-<title>Lowell Public Data Portal: Software Download Page</title>
+<title>Lowell Public Data Portal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
 <body>
 
 <!-- Navigation -->
 <nav class="w3-bar w3-black">
+  <a href="https://lowell.edu" class="w3-button w3-bar-item">
+         <img alt="Lowell Main Site" src="css/images/Pluto_in_True_Color_-_High-Res.jpg"
+		 width=30" height=30">
   <a href="index.html" class="w3-button w3-bar-item">Home</a>
   <a href="downloads.html" class="w3-button w3-bar-item">Software</a>
   <a href="data.html" class="w3-button w3-bar-item">Data</a>
@@ -15,242 +18,102 @@
   <a href="contact.html" class="w3-button w3-bar-item">Contact</a>
 </nav>
 
-
-<title>Lowell Public Data Portal: Calender</title>
+<head>
+    <title>Lowell Public Data Portal: Calendar</title>
 </head>
 
 <body>
+    <a href="https://www.cleardarksky.com/c/FlagstaffAZkey.html">
+        <img src="https://www.cleardarksky.com/c/FlagstaffAZcsk.gif?c=1209614" class="center">
+    </a>
 
     <div id="showcase-wrapper">
-        <div id="myCalendarWrapper"></div>
-        <div id="example">
-            <h3>Current Date:
-                <p id="current-date"></p>
+        <input type="date" id="myCalendarWrapper">
+
+		<div hidden>
+            <p id="current-date"></p>
+            <p id="current-datestring"></p>
+		</div>
+        <div id="imageDisplay">
+            <h3>Todays Image:
+                <img src="" id="current-image" class="image">
             </h3>
-            <h3>Day of the Week:
-                <p id="current-day"></p>
-            </h3>
-            <h3>Date Selected:
-                <p id="current-datestring"></p>
-            </h3>
+			<h3>Selected Image:
+				<img src="" id="selected-image" class="image">
+				<img src="/css/images/404.jpg" id="not-found-image" class="image" style="display:none">
+			</h3>
         </div>
     </div>
 
+    <script>
+        const currentImageElement = document.getElementById('current-image');
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        currentImageElement.src = `calender_images/${year}-${month}-${day}.jpg`;
 
-<script src="js/CalendarPicker.js"></script>
+        const selectedImageElement = document.getElementById('selected-image');
+        selectedImageElement.style.display = 'none';
+		selectedImageElement.addEventListener('error', () => {
+			selectedImageElement.style.display = 'none';
+			const notFoundImageElement = document.getElementById('not-found-image');
+			notFoundImageElement.style.display = 'block';
+		});
 
-<script>
-    const nextYear = new Date().getFullYear() + 1;
-    const myCalender = new CalendarPicker('#myCalendarWrapper', {
-        // If max < min or min > max then the only available day will be today.
-        min: new Date(),
-        max: new Date(nextYear, 10), // NOTE: new Date(nextYear, 10) is "Nov 01 <nextYear>"
-        locale: 'en-US', // Can be any locale or language code supported by Intl.DateTimeFormat, defaults to 'en-US'
-        showShortWeekdays: true // Can be used to fit calendar onto smaller (mobile) screens, defaults to false
-    });
+        const currentDateElement = document.getElementById('current-date');
+        currentDateElement.textContent = currentDate.toLocaleDateString();
 
-    const currentDateElement = document.getElementById('current-date');
-    currentDateElement.textContent = myCalender.value;
+        const currentToDateString = document.getElementById('current-datestring');
+        currentToDateString.textContent = currentDate.toDateString();
 
-    const currentDayElement = document.getElementById('current-day');
-    currentDayElement.textContent = myCalender.value.getDay();
+        const myCalendar = document.getElementById('myCalendarWrapper');
 
-    const currentToDateString = document.getElementById('current-datestring');
-    currentToDateString.textContent = myCalender.value.toDateString();
+        myCalendar.addEventListener('change', (event) => {
+            selectedImageElement.style.display = 'block';
+            const selectedDate = new Date(event.target.value);
+			const selectedYear = selectedDate.getFullYear();
+			const selectedMonth = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+			const selectedDay = (selectedDate.getDate() + 1).toString().padStart(2, '0');
+			selectedImageElement.src = `calender_images/${selectedYear}-${selectedMonth}-${selectedDay}.jpg`;
+            const selectedToDateString = document.getElementById('selected-datestring');
+            selectedToDateString.textContent = new Date(event.target.value).toDateString();
+        });
+    </script>
 
-    myCalender.onValueChange((currentValue) => {
-        currentDateElement.textContent = currentValue;
-        currentDayElement.textContent = currentValue.getDay();
-        currentToDateString.textContent = currentValue.toDateString();
+    <style>
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
 
-        console.log(`The current value of the calendar is: ${currentValue}`);
-    });
-</script>
-<a href=https://www.cleardarksky.com/c/FlagstaffAZkey.html>
-<img src="https://www.cleardarksky.com/c/FlagstaffAZcsk.gif?c=1209614" class="center"></a>
+        .image {
+            width: 100%;
+            height: auto;
+        }
 
-<style>
-.center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
+        #showcase-wrapper {
+            margin: 2rem auto 5rem;
+            padding: 2em 4em;
+            font-size: 1rem;
+        }
 
+        #imageDisplay {
+            margin: 0 auto;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        }
 
-#myCalendarWrapper {
-    padding: 2em 4em;
-    font-size: 1rem;
-    margin: 2rem auto 5rem;
-}
+        #imageDisplay h3:not(:first-of-type) {
+            margin-top: 3rem;
+        }
 
-.pink {
-    color: rgb(233, 72, 99);
-}
-
-#example {
-    margin: 0 auto;
-    text-align: center;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
-}
-		
-#example h3:not(:first-of-type) {
-    margin-top: 3rem;
- }
-
- #example p {
-    font-size: 1rem;
- }
-
-
-
-
-
-#calendar-wrapper {
-    width: 100%;
-    display: grid;
-    grid-template-rows: 2.5em 1fr;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    box-sizing: border-box;
-    font-size: inherit;
-}
-
-#calendar-wrapper header {
-    grid-row: 1/2;
-    font-size: 2em;
-    box-sizing: inherit;
-}
-
-#calendar-wrapper header h4 {
-    padding: 0;
-    margin: 0;
-}
-
-#calendar {
-    display: grid;
-    grid-template-columns: 1fr 4em;
-    grid-template-rows: 3em 1fr;
-    box-sizing: inherit;
-    padding: 0;
-    margin: 0;
-}
-
-#calendar #calendar-days,
-#calendar #calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    align-items: center;
-    padding: 0 1em;
-    box-sizing: inherit;
-    margin: 0;
-}
-
-#calendar #calendar-days {
-    justify-items: center;
-    grid-row: 1/2;
-    grid-column: 1/2;
-}
-
-#calendar #calendar-grid {
-    grid-template-rows: repeat(6, 1fr);
-    justify-items: flex-start;
-    grid-row: 2/-1;
-    grid-column: 1/2;
-    width: 100%;
-}
-
-#calendar #calendar-grid > time {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    margin: 0.4em;
-    padding: 1em 0.2em;
-    width: 90%;
-    background-color: rgba(108, 108, 108, 0.02);
-    border-radius: 3px;
-    border: 2px solid transparent;
-    transition: box-shadow 200ms, border 100ms;
-    box-shadow: 1px 1px rgba(0, 0, 0, 0);
-    box-sizing: inherit;
-}
-
-#calendar #calendar-grid time.selected,
-#calendar #calendar-grid time.selected:focus {
-    outline: none;
-    border: 2px solid #c64949;
-    box-sizing: inherit;
-}
-
-#calendar #calendar-grid time.disabled,
-#calendar #calendar-grid time.disabled:focus {
-    outline: none;
-    border: 2px solid transparent;
-    box-sizing: inherit;
-    cursor: not-allowed;
-    background-color: rgba(30, 39, 51, 0.2);
-    box-shadow: 1px 1px rgba(0, 0, 0, 0);
-
-}
-
-#calendar #calendar-grid > *:hover {
-    border: 2px solid rgba(72, 72, 72, 0.5);
-    box-shadow: 1px 1px rgba(0, 0, 0, 0.2);
-    box-sizing: inherit;
-}
-
-#calendar #navigation-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    grid-row: 2/-1;
-    grid-column: 2/-1;
-    box-sizing: inherit;
-    padding: 1em 0 3.5em;
-    margin: 0;
-}
-
-#calendar #navigation-wrapper button {
-    cursor: pointer;
-    background: transparent;
-    border: 0;
-    font-size: 3em;
-    width: 1.6em;    
-    box-sizing: inherit;
-    padding: 0.1em;
-    margin: 0;
-}
-
-#calendar #navigation-wrapper button:hover {
-    opacity: 0.75;
-}
-
-
-#calendar #navigation-wrapper button svg {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 1.6em;
-    display: block;
-    box-sizing: inherit;
-}
-
-#calendar #navigation-wrapper button:first-of-type {
-    transform: rotate(180deg);
-}
-
-#calendar #navigation-wrapper button[disabled] svg {
-    cursor: not-allowed;
-    fill: rgba(30, 39, 51, 0.2);
-}
-
-</style>
+        #imageDisplay p {
+            font-size: 1rem;
+        }
+    </style>
+</body>
 
 </html>
